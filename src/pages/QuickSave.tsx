@@ -7,6 +7,13 @@ function getParam(name: string): string {
   return new URLSearchParams(window.location.search).get(name) ?? "";
 }
 
+// Android's share sheet often puts the link inside "text" rather than "url"
+// (e.g. "Check this out https://example.com"), depending on the sharing app.
+function extractUrlFromText(text: string): string {
+  const match = text.match(/https?:\/\/\S+/i);
+  return match ? match[0] : text;
+}
+
 // This page is only ever used for a single save per page load (opened fresh
 // by the bookmarklet each time), so a module-level flag is the reliable way
 // to dedupe — it survives re-renders and remounts within this page load in
@@ -16,7 +23,7 @@ let hasSaved = false;
 export default function QuickSave() {
   const { collections, addLink, updateLink, setLinkTags } = useLinkbox();
   const pageTitle = getParam("title");
-  const url = normalizeUrl(getParam("url"));
+  const url = normalizeUrl(getParam("url") || extractUrlFromText(getParam("text")));
 
   const [status, setStatus] = useState<"saving" | "saved" | "error">("saving");
   const [linkId, setLinkId] = useState<string | null>(null);
@@ -60,7 +67,12 @@ export default function QuickSave() {
         );
       }
     }
+    // Works for the bookmarklet's popup window. When launched instead as an
+    // installed PWA (Android share target, iOS Shortcut), the browser won't
+    // let a script close a window it didn't open — close() silently no-ops
+    // and execution falls through to this redirect instead.
     window.close();
+    window.location.href = "/";
   }
 
   if (!url) {
