@@ -8,6 +8,7 @@ import LinkCard from "../components/LinkCard";
 import BulkActionBar from "../components/BulkActionBar";
 import LinkDetailModal from "../components/LinkDetailModal";
 import BackupModal from "../components/BackupModal";
+import BookmarkletModal from "../components/BookmarkletModal";
 import EmptyState from "../components/EmptyState";
 import type { LinkWithTags, LinkboxExport, ViewMode } from "../types";
 
@@ -39,6 +40,7 @@ export default function AppShell() {
   const [view, setView] = useState<ViewMode>("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [backupOpen, setBackupOpen] = useState(false);
+  const [bookmarkletOpen, setBookmarkletOpen] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeLinkId, setActiveLinkId] = useState<string | null>(null);
@@ -131,6 +133,7 @@ export default function AppShell() {
           show("Collection deleted", "success");
         }}
         onOpenBackup={() => setBackupOpen(true)}
+        onOpenBookmarklet={() => setBookmarkletOpen(true)}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
@@ -269,6 +272,8 @@ export default function AppShell() {
         onExport={exportAll}
         onImport={importData}
       />
+
+      <BookmarkletModal open={bookmarkletOpen} onClose={() => setBookmarkletOpen(false)} />
     </div>
   );
 }

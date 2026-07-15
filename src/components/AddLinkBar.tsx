@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { fetchLinkMetadata } from "../lib/metadata";
+import { normalizeUrl } from "../lib/url";
 import { useToast } from "../context/ToastContext";
 
 interface AddLinkBarProps {
@@ -15,19 +16,6 @@ interface AddLinkBarProps {
     id: string,
     patch: { title?: string | null; description?: string | null; thumbnail_url?: string | null },
   ) => Promise<void>;
-}
-
-function normalizeUrl(raw: string): string | null {
-  const trimmed = raw.trim();
-  if (!trimmed) return null;
-  try {
-    const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-    const parsed = new URL(withProtocol);
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
-    return parsed.toString();
-  } catch {
-    return null;
-  }
 }
 
 export default function AddLinkBar({

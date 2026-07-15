@@ -18,6 +18,7 @@ interface SidebarProps {
   onRenameCollection: (id: string, name: string) => Promise<unknown>;
   onDeleteCollection: (id: string) => Promise<unknown>;
   onOpenBackup: () => void;
+  onOpenBookmarklet: () => void;
   open: boolean;
   onClose: () => void;
 }
@@ -36,6 +37,7 @@ export default function Sidebar({
   onRenameCollection,
   onDeleteCollection,
   onOpenBackup,
+  onOpenBookmarklet,
   open,
   onClose,
 }: SidebarProps) {
@@ -223,6 +225,13 @@ export default function Sidebar({
         </div>
 
         <div className="border-t border-neutral-200 dark:border-neutral-800 p-3 space-y-1">
+          <button
+            type="button"
+            onClick={onOpenBookmarklet}
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/60 dark:hover:bg-neutral-800 transition-colors"
+          >
+            <span>🔖</span> Save from anywhere
+          </button>
           <button
             type="button"
             onClick={onOpenBackup}
