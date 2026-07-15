@@ -164,9 +164,23 @@ export function useLinkbox() {
   const updateLink = useCallback(
     async (
       id: string,
-      patch: Partial<Pick<LinkRow, "title" | "description" | "notes" | "collection_id" | "thumbnail_url" | "url">>,
+      patch: Partial<
+        Pick<
+          LinkRow,
+          "title" | "description" | "notes" | "collection_id" | "thumbnail_url" | "url" | "pinned"
+        >
+      >,
     ) => {
       const { error } = await supabase.from("links").update(patch).eq("id", id);
+      if (error) throw error;
+      await fetchAll();
+    },
+    [fetchAll],
+  );
+
+  const togglePin = useCallback(
+    async (id: string, pinned: boolean) => {
+      const { error } = await supabase.from("links").update({ pinned }).eq("id", id);
       if (error) throw error;
       await fetchAll();
     },
@@ -209,11 +223,11 @@ export function useLinkbox() {
   );
 
   const addCollection = useCallback(
-    async (name: string) => {
+    async (name: string, parentId?: string | null) => {
       if (!user) throw new Error("Not signed in");
       const { data, error } = await supabase
         .from("collections")
-        .insert({ name, user_id: user.id })
+        .insert({ name, user_id: user.id, parent_id: parentId ?? null })
         .select("*")
         .single();
       if (error) throw error;
@@ -269,6 +283,21 @@ export function useLinkbox() {
         collectionIdMap.set(c.id, inserted.id);
       }
 
+      // Second pass: wire up parent_id now that every old id has a new one,
+      // since a child can appear before its parent in the export array.
+      for (const c of data.collections) {
+        if (!c.parent_id) continue;
+        const newId = collectionIdMap.get(c.id);
+        const newParentId = collectionIdMap.get(c.parent_id);
+        if (newId && newParentId) {
+          const { error } = await supabase
+            .from("collections")
+            .update({ parent_id: newParentId })
+            .eq("id", newId);
+          if (error) throw error;
+        }
+      }
+
       const tagIdMap = new Map<string, string>();
       for (const t of data.tags) {
         const { data: inserted, error } = await supabase
@@ -290,6 +319,7 @@ export function useLinkbox() {
             description: l.description,
             thumbnail_url: l.thumbnail_url,
             notes: l.notes,
+            pinned: l.pinned,
             collection_id: l.collection_id ? (collectionIdMap.get(l.collection_id) ?? null) : null,
           })
           .select("id")
@@ -323,6 +353,7 @@ export function useLinkbox() {
     unsortedCount,
     addLink,
     updateLink,
+    togglePin,
     setLinkTags,
     deleteLinks,
     moveLinksToCollection,

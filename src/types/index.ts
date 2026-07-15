@@ -2,6 +2,7 @@ export interface Collection {
   id: string;
   user_id: string;
   name: string;
+  parent_id: string | null;
   created_at: string;
 }
 
@@ -20,6 +21,7 @@ export interface LinkRow {
   thumbnail_url: string | null;
   collection_id: string | null;
   notes: string | null;
+  pinned: boolean;
   created_at: string;
   updated_at: string;
 }

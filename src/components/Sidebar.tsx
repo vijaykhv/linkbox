@@ -11,9 +11,10 @@ interface SidebarProps {
   allCount: number;
   unsortedCount: number;
   countByCollection: Record<string, number>;
-  activeCollectionId: string | null | "unsorted";
+  activeCollectionId: string | null | "unsorted" | "all";
   activeTagId: string | null;
-  onSelectCollection: (id: string | null | "unsorted") => void;
+  onSelectCollection: (id: string | null | "unsorted" | "all") => void;
+  onGoHome: () => void;
   onSelectTag: (id: string | null) => void;
   onAddCollection: (name: string) => Promise<unknown>;
   onRenameCollection: (id: string, name: string) => Promise<unknown>;
@@ -33,6 +34,7 @@ export default function Sidebar({
   activeCollectionId,
   activeTagId,
   onSelectCollection,
+  onGoHome,
   onSelectTag,
   onAddCollection,
   onRenameCollection,
@@ -67,6 +69,63 @@ export default function Sidebar({
     setEditingId(null);
   }
 
+  function renderCollectionTree(parentId: string | null, depth: number) {
+    const level = collections.filter((c) => c.parent_id === parentId);
+    return level.map((c) => {
+      const color = getCollectionColor(c.id);
+      return (
+        <div key={c.id} style={{ marginLeft: depth * 14 }}>
+          {editingId === c.id ? (
+            <input
+              autoFocus
+              value={editingName}
+              onChange={(e) => setEditingName(e.target.value)}
+              onBlur={() => handleRename(c.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleRename(c.id);
+                if (e.key === "Escape") setEditingId(null);
+              }}
+              className="w-full rounded-lg border border-violet-400 bg-white dark:bg-ink-800 px-2.5 py-2 text-sm outline-none"
+            />
+          ) : (
+            <div className="group relative">
+              <SidebarItem
+                label={c.name}
+                icon={color.emoji}
+                chipBg={color.bg}
+                count={countByCollection[c.id] ?? 0}
+                active={activeCollectionId === c.id}
+                onClick={() => onSelectCollection(c.id)}
+              />
+              <div className="absolute right-1.5 top-1/2 -translate-y-1/2 hidden group-hover:flex gap-0.5 bg-cream-50 dark:bg-ink-900">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingId(c.id);
+                    setEditingName(c.name);
+                  }}
+                  className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-violet-600"
+                  aria-label={`Rename ${c.name}`}
+                >
+                  ✎
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(c)}
+                  className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-red-600"
+                  aria-label={`Delete ${c.name}`}
+                >
+                  🗑
+                </button>
+              </div>
+            </div>
+          )}
+          {renderCollectionTree(c.id, depth + 1)}
+        </div>
+      );
+    });
+  }
+
   return (
     <>
       {open && (
@@ -81,12 +140,19 @@ export default function Sidebar({
         }`}
       >
         <div className="flex items-center gap-2.5 px-4 h-16 shrink-0 border-b border-cream-300/70 dark:border-ink-800">
-          <div className="h-9 w-9 rounded-2xl bg-violet-500 text-white flex items-center justify-center font-extrabold text-base pop-border pop-shadow-sm">
-            L
-          </div>
-          <span className="font-extrabold text-lg tracking-tight text-ink-950 dark:text-cream-50">
-            Linkbox
-          </span>
+          <button
+            type="button"
+            onClick={onGoHome}
+            className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+            aria-label="Go home"
+          >
+            <div className="h-9 w-9 rounded-2xl bg-violet-500 text-white flex items-center justify-center font-extrabold text-base pop-border pop-shadow-sm">
+              L
+            </div>
+            <span className="font-extrabold text-lg tracking-tight text-ink-950 dark:text-cream-50">
+              Linkbox
+            </span>
+          </button>
           <button
             type="button"
             onClick={onClose}
@@ -104,8 +170,8 @@ export default function Sidebar({
               icon="📚"
               chipBg="#e9dcff"
               count={allCount}
-              active={activeCollectionId === null}
-              onClick={() => onSelectCollection(null)}
+              active={activeCollectionId === "all"}
+              onClick={() => onSelectCollection("all")}
             />
             <SidebarItem
               label="Unsorted"
@@ -132,55 +198,7 @@ export default function Sidebar({
               </button>
             </div>
             <div className="space-y-0.5">
-              {collections.map((c) => {
-                const color = getCollectionColor(c.id);
-                return editingId === c.id ? (
-                  <input
-                    key={c.id}
-                    autoFocus
-                    value={editingName}
-                    onChange={(e) => setEditingName(e.target.value)}
-                    onBlur={() => handleRename(c.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleRename(c.id);
-                      if (e.key === "Escape") setEditingId(null);
-                    }}
-                    className="w-full rounded-lg border border-violet-400 bg-white dark:bg-ink-800 px-2.5 py-2 text-sm outline-none"
-                  />
-                ) : (
-                  <div key={c.id} className="group relative">
-                    <SidebarItem
-                      label={c.name}
-                      icon={color.emoji}
-                      chipBg={color.bg}
-                      count={countByCollection[c.id] ?? 0}
-                      active={activeCollectionId === c.id}
-                      onClick={() => onSelectCollection(c.id)}
-                    />
-                    <div className="absolute right-1.5 top-1/2 -translate-y-1/2 hidden group-hover:flex gap-0.5 bg-cream-50 dark:bg-ink-900">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingId(c.id);
-                          setEditingName(c.name);
-                        }}
-                        className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-violet-600"
-                        aria-label={`Rename ${c.name}`}
-                      >
-                        ✎
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDeleteTarget(c)}
-                        className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-red-600"
-                        aria-label={`Delete ${c.name}`}
-                      >
-                        🗑
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+              {renderCollectionTree(null, 0)}
               {adding && (
                 <input
                   autoFocus
@@ -275,7 +293,7 @@ export default function Sidebar({
       <ConfirmDialog
         open={deleteTarget !== null}
         title={`Delete "${deleteTarget?.name}"?`}
-        description="Links in this collection will move to Unsorted. This can't be undone."
+        description="Its links move to Unsorted and any sub-collections are deleted too. This can't be undone."
         confirmLabel="Delete"
         onCancel={() => setDeleteTarget(null)}
         onConfirm={async () => {

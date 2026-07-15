@@ -12,6 +12,7 @@ interface LinkDetailModalProps {
     tagNames: string[],
   ) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onTogglePin: (id: string, pinned: boolean) => Promise<void>;
 }
 
 function hostname(url: string): string {
@@ -28,6 +29,7 @@ export default function LinkDetailModal({
   onClose,
   onSave,
   onDelete,
+  onTogglePin,
 }: LinkDetailModalProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -36,6 +38,7 @@ export default function LinkDetailModal({
   const [tagsInput, setTagsInput] = useState("");
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [pinning, setPinning] = useState(false);
 
   useEffect(() => {
     if (link) {
@@ -94,6 +97,25 @@ export default function LinkDetailModal({
               aria-label="Close"
             >
               ✕
+            </button>
+            <button
+              type="button"
+              disabled={pinning}
+              onClick={async () => {
+                setPinning(true);
+                try {
+                  await onTogglePin(link!.id, !link!.pinned);
+                } finally {
+                  setPinning(false);
+                }
+              }}
+              className={`absolute top-3 left-3 h-8 w-8 rounded-full flex items-center justify-center transition-colors pop-border pop-shadow-sm pop-press disabled:opacity-50 ${
+                link.pinned ? "bg-amber-300 text-ink-950" : "bg-white text-ink-950"
+              }`}
+              aria-label={link.pinned ? "Unpin link" : "Pin link"}
+              aria-pressed={link.pinned}
+            >
+              📌
             </button>
           </div>
 

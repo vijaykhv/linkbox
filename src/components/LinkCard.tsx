@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import type { LinkWithTags, ViewMode } from "../types";
 import type { CollectionColor } from "../lib/collectionColor";
+import { detectPlatform, faviconFor, hostname } from "../lib/platform";
 
 interface LinkCardProps {
   link: LinkWithTags;
@@ -14,25 +15,32 @@ interface LinkCardProps {
   onEnterSelectionMode: () => void;
 }
 
-function hostname(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-}
+const NEW_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
-function faviconFor(url: string): string {
-  try {
-    const host = new URL(url).hostname;
-    return `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
-  } catch {
-    return "";
-  }
+function isNew(iso: string): boolean {
+  return Date.now() - new Date(iso).getTime() < NEW_THRESHOLD_MS;
 }
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function PlayOverlay() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div className="h-11 w-11 rounded-full bg-black/55 flex items-center justify-center text-white text-lg pl-0.5">
+        ▶
+      </div>
+    </div>
+  );
+}
+
+function NewRibbon() {
+  return (
+    <span className="absolute top-2 left-2 z-10 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-300 text-ink-950 pop-border pop-shadow-sm -rotate-6">
+      NEW
+    </span>
+  );
 }
 
 const LONG_PRESS_MS = 450;
@@ -93,6 +101,8 @@ export default function LinkCard({
   }
 
   const thumb = link.thumbnail_url || faviconFor(link.url);
+  const platform = detectPlatform(link.url);
+  const linkIsNew = isNew(link.created_at);
 
   if (view === "list") {
     return (
@@ -151,6 +161,7 @@ export default function LinkCard({
         selected ? "pop-shadow ring-2 ring-violet-400" : "pop-shadow-sm hover:pop-shadow hover:-translate-y-0.5"
       }`}
     >
+      {!selectionMode && linkIsNew && <NewRibbon />}
       {selectionMode && (
         <div className="absolute top-2 left-2 z-10">
           <input
@@ -161,7 +172,7 @@ export default function LinkCard({
           />
         </div>
       )}
-      <div className="aspect-[16/9] bg-cream-200 dark:bg-ink-800 flex items-center justify-center overflow-hidden border-b-2 border-ink-950 dark:border-cream-100/85">
+      <div className="relative aspect-[16/9] bg-cream-200 dark:bg-ink-800 flex items-center justify-center overflow-hidden border-b-2 border-ink-950 dark:border-cream-100/85">
         {link.thumbnail_url ? (
           <img
             src={link.thumbnail_url}
@@ -174,6 +185,7 @@ export default function LinkCard({
         ) : (
           <img src={faviconFor(link.url)} alt="" className="h-8 w-8 opacity-70" />
         )}
+        {platform?.isVideo && <PlayOverlay />}
       </div>
       <div className="p-3">
         <p className="text-sm font-bold text-ink-950 dark:text-cream-50 line-clamp-1">
@@ -185,8 +197,11 @@ export default function LinkCard({
           </p>
         )}
         <div className="flex items-center justify-between mt-2 gap-2">
-          <span className="text-xs font-medium text-ink-950/40 dark:text-cream-100/40 truncate">
-            {hostname(link.url)}
+          <span className="flex items-center gap-1 text-xs font-medium text-ink-950/40 dark:text-cream-100/40 truncate">
+            {platform && (
+              <img src={faviconFor(link.url)} alt="" className="h-3.5 w-3.5 rounded-sm shrink-0" />
+            )}
+            {platform?.name ?? hostname(link.url)}
           </span>
           <span className="text-xs font-medium text-ink-950/40 dark:text-cream-100/40 shrink-0">
             {formatDate(link.created_at)}
