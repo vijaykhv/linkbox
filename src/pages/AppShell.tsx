@@ -10,6 +10,7 @@ import LinkDetailModal from "../components/LinkDetailModal";
 import BackupModal from "../components/BackupModal";
 import BookmarkletModal from "../components/BookmarkletModal";
 import EmptyState from "../components/EmptyState";
+import { getCollectionColor } from "../lib/collectionColor";
 import type { LinkWithTags, LinkboxExport, ViewMode } from "../types";
 
 type CollectionFilter = string | null | "unsorted";
@@ -52,6 +53,11 @@ export default function AppShell() {
     }
     return counts;
   }, [links]);
+
+  const collectionById = useMemo(
+    () => new Map(collections.map((c) => [c.id, c])),
+    [collections],
+  );
 
   const filteredLinks = useMemo(() => {
     let result = links;
@@ -111,7 +117,7 @@ export default function AppShell() {
   }
 
   return (
-    <div className="flex h-svh overflow-hidden bg-white dark:bg-neutral-950">
+    <div className="flex h-svh overflow-hidden bg-cream-100 dark:bg-ink-950">
       <Sidebar
         collections={collections}
         tags={tags}
@@ -180,39 +186,49 @@ export default function AppShell() {
               )
             ) : view === "grid" ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {filteredLinks.map((link) => (
-                  <LinkCard
-                    key={link.id}
-                    link={link}
-                    view="grid"
-                    selected={selectedIds.has(link.id)}
-                    selectionMode={selectionMode}
-                    onOpen={() => setActiveLinkId(link.id)}
-                    onToggleSelect={() => toggleSelect(link.id)}
-                    onEnterSelectionMode={() => {
-                      setSelectionMode(true);
-                      toggleSelect(link.id);
-                    }}
-                  />
-                ))}
+                {filteredLinks.map((link) => {
+                  const collection = link.collection_id ? collectionById.get(link.collection_id) : null;
+                  return (
+                    <LinkCard
+                      key={link.id}
+                      link={link}
+                      view="grid"
+                      selected={selectedIds.has(link.id)}
+                      selectionMode={selectionMode}
+                      collectionName={collection?.name ?? null}
+                      collectionColor={collection ? getCollectionColor(collection.id) : null}
+                      onOpen={() => setActiveLinkId(link.id)}
+                      onToggleSelect={() => toggleSelect(link.id)}
+                      onEnterSelectionMode={() => {
+                        setSelectionMode(true);
+                        toggleSelect(link.id);
+                      }}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <div className="space-y-1">
-                {filteredLinks.map((link) => (
-                  <LinkCard
-                    key={link.id}
-                    link={link}
-                    view="list"
-                    selected={selectedIds.has(link.id)}
-                    selectionMode={selectionMode}
-                    onOpen={() => setActiveLinkId(link.id)}
-                    onToggleSelect={() => toggleSelect(link.id)}
-                    onEnterSelectionMode={() => {
-                      setSelectionMode(true);
-                      toggleSelect(link.id);
-                    }}
-                  />
-                ))}
+                {filteredLinks.map((link) => {
+                  const collection = link.collection_id ? collectionById.get(link.collection_id) : null;
+                  return (
+                    <LinkCard
+                      key={link.id}
+                      link={link}
+                      view="list"
+                      selected={selectedIds.has(link.id)}
+                      selectionMode={selectionMode}
+                      collectionName={collection?.name ?? null}
+                      collectionColor={collection ? getCollectionColor(collection.id) : null}
+                      onOpen={() => setActiveLinkId(link.id)}
+                      onToggleSelect={() => toggleSelect(link.id)}
+                      onEnterSelectionMode={() => {
+                        setSelectionMode(true);
+                        toggleSelect(link.id);
+                      }}
+                    />
+                  );
+                })}
               </div>
             )}
           </div>

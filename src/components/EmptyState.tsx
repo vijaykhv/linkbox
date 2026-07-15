@@ -7,11 +7,13 @@ interface EmptyStateProps {
 export default function EmptyState({ title, description, icon = "🔖" }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center text-center py-20 px-4 animate-fade-in">
-      <div className="h-16 w-16 rounded-2xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center text-3xl mb-4">
+      <div className="h-16 w-16 rounded-2xl bg-amber-200 flex items-center justify-center text-3xl mb-4 pop-border pop-shadow-sm -rotate-3">
         {icon}
       </div>
-      <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
-      <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1 max-w-xs">{description}</p>
+      <h3 className="text-lg font-extrabold text-ink-950 dark:text-cream-50">{title}</h3>
+      <p className="text-sm font-medium text-ink-950/50 dark:text-cream-100/50 mt-1 max-w-xs">
+        {description}
+      </p>
     </div>
   );
 }

@@ -27,28 +27,28 @@ export default function BulkActionBar({
   return (
     <>
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 animate-slide-up px-4 w-full sm:w-auto">
-        <div className="flex items-center gap-1.5 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-2xl shadow-2xl px-3 py-2 mx-auto w-fit">
-          <span className="text-sm font-medium pl-1.5 pr-2.5 whitespace-nowrap">
+        <div className="flex items-center gap-1 bg-white dark:bg-ink-900 rounded-full px-3 py-2 mx-auto w-fit pop-border pop-shadow">
+          <span className="text-sm font-extrabold pl-1.5 pr-2.5 whitespace-nowrap text-ink-950 dark:text-cream-50">
             {count} selected
           </span>
-          <div className="h-5 w-px bg-white/20 dark:bg-neutral-900/20" />
+          <div className="h-5 w-px bg-cream-300 dark:bg-ink-800" />
           <div className="relative">
             <button
               type="button"
               onClick={() => setMoveOpen((o) => !o)}
-              className="text-sm font-medium px-3 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-neutral-900/10 transition-colors"
+              className="text-sm font-bold px-3 py-1.5 rounded-full text-ink-950/70 dark:text-cream-100/70 hover:bg-cream-100 dark:hover:bg-ink-800 transition-colors"
             >
               Move to…
             </button>
             {moveOpen && (
-              <div className="absolute bottom-full mb-2 left-0 w-48 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 py-1 max-h-64 overflow-y-auto animate-pop-in">
+              <div className="absolute bottom-full mb-2 left-0 w-48 bg-white dark:bg-ink-800 text-ink-950 dark:text-cream-100 rounded-xl py-1 max-h-64 overflow-y-auto animate-pop-in pop-border pop-shadow">
                 <button
                   type="button"
                   onClick={() => {
                     onMove(null);
                     setMoveOpen(false);
                   }}
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                  className="w-full text-left px-3 py-2 text-sm font-semibold hover:bg-cream-100 dark:hover:bg-ink-900"
                 >
                   Unsorted
                 </button>
@@ -60,7 +60,7 @@ export default function BulkActionBar({
                       onMove(c.id);
                       setMoveOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 truncate"
+                    className="w-full text-left px-3 py-2 text-sm font-semibold hover:bg-cream-100 dark:hover:bg-ink-900 truncate"
                   >
                     {c.name}
                   </button>
@@ -71,22 +71,22 @@ export default function BulkActionBar({
           <button
             type="button"
             onClick={onExport}
-            className="text-sm font-medium px-3 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-neutral-900/10 transition-colors"
+            className="text-sm font-bold px-3 py-1.5 rounded-full text-ink-950/70 dark:text-cream-100/70 hover:bg-cream-100 dark:hover:bg-ink-800 transition-colors"
           >
             Export
           </button>
           <button
             type="button"
             onClick={() => setConfirmDelete(true)}
-            className="text-sm font-medium px-3 py-1.5 rounded-xl text-red-400 dark:text-red-600 hover:bg-white/10 dark:hover:bg-neutral-900/10 transition-colors"
+            className="text-sm font-bold px-3 py-1.5 rounded-full text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
           >
             Delete
           </button>
-          <div className="h-5 w-px bg-white/20 dark:bg-neutral-900/20" />
+          <div className="h-5 w-px bg-cream-300 dark:bg-ink-800" />
           <button
             type="button"
             onClick={onClear}
-            className="text-sm px-2.5 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-neutral-900/10 transition-colors opacity-70"
+            className="text-sm px-2.5 py-1.5 rounded-full text-ink-950/40 dark:text-cream-100/40 hover:bg-cream-100 dark:hover:bg-ink-800 transition-colors"
             aria-label="Clear selection"
           >
             ✕

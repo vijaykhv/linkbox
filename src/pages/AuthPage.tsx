@@ -49,26 +49,26 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-svh flex items-center justify-center px-4 bg-gradient-to-b from-violet-50 to-white dark:from-neutral-950 dark:to-neutral-950">
+    <div className="min-h-svh flex items-center justify-center px-4 bg-cream-100 dark:bg-ink-950">
       <div className="w-full max-w-sm animate-slide-up">
         <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-600 text-white text-2xl font-semibold shadow-lg shadow-violet-600/20 mb-4">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500 text-white text-2xl font-extrabold mb-4 pop-border pop-shadow">
             L
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+          <h1 className="text-3xl font-extrabold tracking-tight text-ink-950 dark:text-cream-50">
             Linkbox
           </h1>
-          <p className="text-neutral-500 dark:text-neutral-400 mt-1 text-sm">
+          <p className="text-ink-950/50 dark:text-cream-100/50 mt-1.5 text-sm font-medium">
             Your links, saved and synced everywhere.
           </p>
         </div>
 
-        <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-xl shadow-neutral-900/5 border border-neutral-200 dark:border-neutral-800 p-6">
+        <div className="bg-white dark:bg-ink-900 rounded-2xl p-6 pop-border pop-shadow">
           <button
             type="button"
             onClick={handleGoogle}
             disabled={googleBusy}
-            className="w-full flex items-center justify-center gap-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 disabled:opacity-50 text-sm font-medium text-neutral-700 dark:text-neutral-200 py-2.5 transition-colors active:scale-[0.98]"
+            className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-white dark:bg-ink-800 disabled:opacity-50 text-sm font-bold text-ink-950 dark:text-cream-50 py-2.5 pop-border pop-shadow-sm pop-press"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
               <path
@@ -92,12 +92,12 @@ export default function AuthPage() {
           </button>
 
           <div className="flex items-center gap-3 my-4">
-            <div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
-            <span className="text-xs text-neutral-400 dark:text-neutral-500">or</span>
-            <div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+            <div className="h-px flex-1 bg-cream-300 dark:bg-ink-800" />
+            <span className="text-xs font-bold text-ink-950/30 dark:text-cream-100/30">or</span>
+            <div className="h-px flex-1 bg-cream-300 dark:bg-ink-800" />
           </div>
 
-          <div className="flex gap-1 mb-5 bg-neutral-100 dark:bg-neutral-800 rounded-xl p-1">
+          <div className="flex gap-1 mb-5 bg-cream-100 dark:bg-ink-800 rounded-xl p-1 pop-border">
             {(["sign-in", "sign-up", "magic-link"] as Mode[]).map((m) => (
               <button
                 key={m}
@@ -107,10 +107,10 @@ export default function AuthPage() {
                   setError(null);
                   setMessage(null);
                 }}
-                className={`flex-1 text-xs font-medium py-2 rounded-lg transition-colors ${
+                className={`flex-1 text-xs font-bold py-2 rounded-lg transition-colors ${
                   mode === m
-                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-50 shadow-sm"
-                    : "text-neutral-500 dark:text-neutral-400"
+                    ? "bg-amber-300 text-ink-950 pop-border pop-shadow-sm"
+                    : "text-ink-950/50 dark:text-cream-100/50"
                 }`}
               >
                 {m === "sign-in" ? "Sign in" : m === "sign-up" ? "Sign up" : "Magic link"}
@@ -120,7 +120,7 @@ export default function AuthPage() {
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-ink-950/60 dark:text-cream-100/60 mb-1 block">
                 Email
               </label>
               <input
@@ -129,13 +129,13 @@ export default function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-shadow"
+                className="w-full rounded-xl bg-cream-100 dark:bg-ink-800 px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-400 pop-border"
               />
             </div>
 
             {mode !== "magic-link" && (
               <div>
-                <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
+                <label className="text-xs font-bold text-ink-950/60 dark:text-cream-100/60 mb-1 block">
                   Password
                 </label>
                 <input
@@ -145,18 +145,18 @@ export default function AuthPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-shadow"
+                  className="w-full rounded-xl bg-cream-100 dark:bg-ink-800 px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-400 pop-border"
                 />
               </div>
             )}
 
             {error && (
-              <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 rounded-lg px-3 py-2">
+              <p className="text-sm font-medium text-red-700 bg-red-100 rounded-lg px-3 py-2 pop-border">
                 {error}
               </p>
             )}
             {message && (
-              <p className="text-sm text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg px-3 py-2">
+              <p className="text-sm font-medium text-emerald-800 bg-emerald-100 rounded-lg px-3 py-2 pop-border">
                 {message}
               </p>
             )}
@@ -164,7 +164,7 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full rounded-xl bg-violet-600 hover:bg-violet-700 active:scale-[0.98] disabled:opacity-50 text-white text-sm font-medium py-2.5 transition-all shadow-lg shadow-violet-600/20"
+              className="w-full rounded-xl bg-violet-500 disabled:opacity-50 text-white text-sm font-bold py-2.5 pop-border pop-shadow pop-press"
             >
               {busy
                 ? "Please wait…"

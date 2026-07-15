@@ -56,10 +56,10 @@ export default function AddLinkBar({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex gap-2.5">
       <div className="relative flex-1">
         <svg
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400"
+          className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-950/40 dark:text-cream-100/40"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -77,13 +77,13 @@ export default function AddLinkBar({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Paste a link to save it…"
-          className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 pl-10 pr-3.5 py-3 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-shadow placeholder:text-neutral-400"
+          className="w-full rounded-full bg-white dark:bg-ink-900 pl-11 pr-3.5 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 transition-shadow placeholder:text-ink-950/35 dark:placeholder:text-cream-100/35 pop-border pop-shadow-sm"
         />
       </div>
       <button
         type="submit"
         disabled={saving || !value.trim()}
-        className="shrink-0 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-40 disabled:hover:bg-violet-600 active:scale-[0.97] text-white text-sm font-medium px-5 py-3 transition-all shadow-lg shadow-violet-600/20"
+        className="shrink-0 rounded-full bg-amber-300 disabled:opacity-40 text-ink-950 text-sm font-extrabold px-6 py-3 pop-border pop-shadow pop-press"
       >
         Save
       </button>

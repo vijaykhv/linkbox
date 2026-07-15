@@ -32,12 +32,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`animate-slide-up pointer-events-auto max-w-sm text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg border backdrop-blur ${
+            className={`animate-slide-up pointer-events-auto max-w-sm text-sm font-bold px-4 py-2.5 rounded-xl pop-border pop-shadow ${
               t.tone === "success"
-                ? "bg-emerald-600/95 text-white border-emerald-500"
+                ? "bg-emerald-300 text-ink-950"
                 : t.tone === "error"
-                  ? "bg-red-600/95 text-white border-red-500"
-                  : "bg-neutral-900/95 dark:bg-neutral-100/95 text-white dark:text-neutral-900 border-neutral-800 dark:border-neutral-200"
+                  ? "bg-red-300 text-ink-950"
+                  : "bg-white dark:bg-ink-800 text-ink-950 dark:text-cream-50"
             }`}
           >
             {t.message}

@@ -73,10 +73,10 @@ export default function LinkDetailModal({
         onClick={onClose}
       >
         <div
-          className="w-full sm:max-w-lg max-h-[92svh] overflow-y-auto bg-white dark:bg-neutral-900 sm:rounded-2xl rounded-t-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl animate-slide-up"
+          className="w-full sm:max-w-lg max-h-[92svh] overflow-y-auto bg-white dark:bg-ink-900 sm:rounded-2xl rounded-t-2xl animate-slide-up pop-border pop-shadow"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="aspect-[16/7] bg-neutral-100 dark:bg-neutral-800 relative">
+          <div className="aspect-[16/7] bg-cream-200 dark:bg-ink-800 relative border-b-2 border-ink-950 dark:border-cream-100/85">
             {link.thumbnail_url && (
               <img
                 src={link.thumbnail_url}
@@ -90,7 +90,7 @@ export default function LinkDetailModal({
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur hover:bg-black/70 transition-colors"
+              className="absolute top-3 right-3 h-8 w-8 rounded-full bg-white text-ink-950 flex items-center justify-center transition-colors pop-border pop-shadow-sm pop-press"
               aria-label="Close"
             >
               ✕
@@ -103,40 +103,40 @@ export default function LinkDetailModal({
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-violet-600 dark:text-violet-400 hover:underline break-all"
+                className="text-xs font-bold text-violet-600 dark:text-violet-400 hover:underline break-all"
               >
                 {link.url} ↗
               </a>
-              <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
+              <p className="text-xs font-medium text-ink-950/40 dark:text-cream-100/40 mt-0.5">
                 Saved {new Date(link.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })} · {hostname(link.url)}
               </p>
             </div>
 
             <div>
-              <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-ink-950/60 dark:text-cream-100/60 mb-1 block">
                 Title
               </label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                className="w-full rounded-xl bg-cream-100 dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 pop-border"
               />
             </div>
 
             <div>
-              <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-ink-950/60 dark:text-cream-100/60 mb-1 block">
                 Description
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={2}
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
+                className="w-full rounded-xl bg-cream-100 dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 resize-none pop-border"
               />
             </div>
 
             <div>
-              <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-ink-950/60 dark:text-cream-100/60 mb-1 block">
                 Notes
               </label>
               <textarea
@@ -144,19 +144,19 @@ export default function LinkDetailModal({
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
                 placeholder="Add a private note…"
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
+                className="w-full rounded-xl bg-cream-100 dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 resize-none pop-border"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1 block">
+                <label className="text-xs font-bold text-ink-950/60 dark:text-cream-100/60 mb-1 block">
                   Collection
                 </label>
                 <select
                   value={collectionId ?? ""}
                   onChange={(e) => setCollectionId(e.target.value || null)}
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500"
+                  className="w-full rounded-xl bg-cream-100 dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 pop-border"
                 >
                   <option value="">Unsorted</option>
                   {collections.map((c) => (
@@ -167,14 +167,14 @@ export default function LinkDetailModal({
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1 block">
+                <label className="text-xs font-bold text-ink-950/60 dark:text-cream-100/60 mb-1 block">
                   Tags
                 </label>
                 <input
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
                   placeholder="comma, separated"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500"
+                  className="w-full rounded-xl bg-cream-100 dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 pop-border"
                 />
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function LinkDetailModal({
               <button
                 type="button"
                 onClick={() => setConfirmDelete(true)}
-                className="text-sm font-medium text-red-600 dark:text-red-400 px-3 py-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
+                className="text-sm font-bold text-red-600 px-3 py-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
               >
                 Delete link
               </button>
@@ -191,7 +191,7 @@ export default function LinkDetailModal({
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 disabled:opacity-50 px-4 py-2 rounded-xl transition-colors active:scale-[0.97]"
+                className="text-sm font-extrabold text-white bg-violet-500 disabled:opacity-50 px-4 py-2 rounded-xl pop-border pop-shadow-sm pop-press"
               >
                 {saving ? "Saving…" : "Save changes"}
               </button>

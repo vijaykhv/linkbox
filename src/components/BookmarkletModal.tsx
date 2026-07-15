@@ -34,13 +34,13 @@ export default function BookmarkletModal({ open, onClose }: BookmarkletModalProp
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-2xl p-5 animate-pop-in"
+        className="w-full max-w-sm rounded-2xl bg-white dark:bg-ink-900 p-5 animate-pop-in pop-border pop-shadow"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-50">
+        <h3 className="text-base font-extrabold text-ink-950 dark:text-cream-50">
           Save from anywhere
         </h3>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+        <p className="text-sm font-medium text-ink-950/50 dark:text-cream-100/50 mt-1">
           Drag this button to your browser's bookmarks bar. Then, on any page you want to save,
           just click it — one tap and it's in Linkbox.
         </p>
@@ -51,17 +51,17 @@ export default function BookmarkletModal({ open, onClose }: BookmarkletModalProp
             ref={anchorRef}
             onClick={(e) => e.preventDefault()}
             draggable
-            className="inline-flex items-center gap-2 rounded-xl bg-violet-600 text-white text-sm font-medium px-4 py-2.5 cursor-grab active:cursor-grabbing shadow-lg shadow-violet-600/20 select-none"
+            className="inline-flex items-center gap-2 rounded-xl bg-amber-300 text-ink-950 text-sm font-extrabold px-4 py-2.5 cursor-grab active:cursor-grabbing select-none pop-border pop-shadow"
           >
             🔖 Save to Linkbox
           </a>
         </div>
 
-        <details className="text-xs text-neutral-500 dark:text-neutral-400">
-          <summary className="cursor-pointer font-medium text-neutral-600 dark:text-neutral-300">
+        <details className="text-xs text-ink-950/50 dark:text-cream-100/50">
+          <summary className="cursor-pointer font-bold text-ink-950/70 dark:text-cream-100/70">
             Bookmarks bar not visible, or on mobile?
           </summary>
-          <div className="mt-2 space-y-2">
+          <div className="mt-2 space-y-2 font-medium">
             <p>
               <strong>Desktop:</strong> show the bookmarks bar first (Cmd/Ctrl+Shift+B in Chrome),
               then drag the button above onto it.
@@ -75,7 +75,7 @@ export default function BookmarkletModal({ open, onClose }: BookmarkletModalProp
               value={href}
               onClick={(e) => (e.target as HTMLTextAreaElement).select()}
               rows={3}
-              className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-2 py-1.5 text-[11px] font-mono outline-none resize-none"
+              className="w-full rounded-lg bg-cream-100 dark:bg-ink-800 px-2 py-1.5 text-[11px] font-mono outline-none resize-none pop-border"
             />
           </div>
         </details>
@@ -83,7 +83,7 @@ export default function BookmarkletModal({ open, onClose }: BookmarkletModalProp
         <button
           type="button"
           onClick={onClose}
-          className="w-full text-center text-sm text-neutral-400 mt-5 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+          className="w-full text-center text-sm font-bold text-ink-950/40 dark:text-cream-100/40 mt-5 hover:text-ink-950/70 dark:hover:text-cream-100/70 transition-colors"
         >
           Close
         </button>

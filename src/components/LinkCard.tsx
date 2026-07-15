@@ -1,11 +1,14 @@
 import { useRef } from "react";
 import type { LinkWithTags, ViewMode } from "../types";
+import type { CollectionColor } from "../lib/collectionColor";
 
 interface LinkCardProps {
   link: LinkWithTags;
   view: ViewMode;
   selected: boolean;
   selectionMode: boolean;
+  collectionName: string | null;
+  collectionColor: CollectionColor | null;
   onOpen: () => void;
   onToggleSelect: () => void;
   onEnterSelectionMode: () => void;
@@ -34,11 +37,30 @@ function formatDate(iso: string): string {
 
 const LONG_PRESS_MS = 450;
 
+function CollectionPill({
+  name,
+  color,
+}: {
+  name: string;
+  color: CollectionColor;
+}) {
+  return (
+    <span
+      className="text-[11px] font-bold px-2 py-0.5 rounded-full pop-border pop-shadow-sm whitespace-nowrap"
+      style={{ backgroundColor: color.bg, color: color.text }}
+    >
+      {name}
+    </span>
+  );
+}
+
 export default function LinkCard({
   link,
   view,
   selected,
   selectionMode,
+  collectionName,
+  collectionColor,
   onOpen,
   onToggleSelect,
   onEnterSelectionMode,
@@ -79,10 +101,8 @@ export default function LinkCard({
         onPointerUp={clearPress}
         onPointerLeave={clearPress}
         onClick={handleClick}
-        className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl border cursor-pointer transition-all animate-pop-in select-none ${
-          selected
-            ? "border-violet-400 bg-violet-50 dark:bg-violet-500/10"
-            : "border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900"
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl cursor-pointer transition-all animate-pop-in select-none bg-white dark:bg-ink-900 pop-border ${
+          selected ? "pop-shadow ring-2 ring-violet-400" : "pop-shadow-sm hover:pop-shadow"
         }`}
       >
         {selectionMode && (
@@ -96,32 +116,25 @@ export default function LinkCard({
         <img
           src={thumb}
           alt=""
-          className="h-9 w-9 rounded-lg object-cover bg-neutral-100 dark:bg-neutral-800 shrink-0"
+          className="h-9 w-9 rounded-lg object-cover bg-cream-200 dark:bg-ink-800 shrink-0 pop-border"
           onError={(e) => {
             (e.target as HTMLImageElement).style.visibility = "hidden";
           }}
         />
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
+          <p className="text-sm font-bold text-ink-950 dark:text-cream-50 truncate">
             {link.title || hostname(link.url)}
           </p>
-          <p className="text-xs text-neutral-400 dark:text-neutral-500 truncate">
+          <p className="text-xs text-ink-950/40 dark:text-cream-100/40 truncate">
             {hostname(link.url)}
           </p>
         </div>
-        {link.tags.length > 0 && (
-          <div className="hidden sm:flex gap-1 shrink-0">
-            {link.tags.slice(0, 2).map((t) => (
-              <span
-                key={t.id}
-                className="text-[11px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400"
-              >
-                #{t.name}
-              </span>
-            ))}
+        {collectionName && collectionColor && (
+          <div className="hidden sm:block shrink-0">
+            <CollectionPill name={collectionName} color={collectionColor} />
           </div>
         )}
-        <span className="text-xs text-neutral-400 dark:text-neutral-500 shrink-0">
+        <span className="text-xs font-medium text-ink-950/40 dark:text-cream-100/40 shrink-0">
           {formatDate(link.created_at)}
         </span>
       </div>
@@ -134,11 +147,9 @@ export default function LinkCard({
       onPointerUp={clearPress}
       onPointerLeave={clearPress}
       onClick={handleClick}
-      className={`group relative rounded-2xl border cursor-pointer overflow-hidden transition-all animate-pop-in select-none active:scale-[0.98] ${
-        selected
-          ? "border-violet-400 ring-2 ring-violet-400/50"
-          : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-md"
-      } bg-white dark:bg-neutral-900`}
+      className={`group relative rounded-2xl cursor-pointer overflow-hidden transition-all animate-pop-in select-none active:scale-[0.98] bg-white dark:bg-ink-900 pop-border ${
+        selected ? "pop-shadow ring-2 ring-violet-400" : "pop-shadow-sm hover:pop-shadow hover:-translate-y-0.5"
+      }`}
     >
       {selectionMode && (
         <div className="absolute top-2 left-2 z-10">
@@ -150,7 +161,7 @@ export default function LinkCard({
           />
         </div>
       )}
-      <div className="aspect-[16/9] bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center overflow-hidden">
+      <div className="aspect-[16/9] bg-cream-200 dark:bg-ink-800 flex items-center justify-center overflow-hidden border-b-2 border-ink-950 dark:border-cream-100/85">
         {link.thumbnail_url ? (
           <img
             src={link.thumbnail_url}
@@ -165,34 +176,35 @@ export default function LinkCard({
         )}
       </div>
       <div className="p-3">
-        <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 line-clamp-1">
+        <p className="text-sm font-bold text-ink-950 dark:text-cream-50 line-clamp-1">
           {link.title || hostname(link.url)}
         </p>
         {link.description && (
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 mt-0.5">
+          <p className="text-xs text-ink-950/50 dark:text-cream-100/50 line-clamp-2 mt-0.5">
             {link.description}
           </p>
         )}
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-xs text-neutral-400 dark:text-neutral-500 truncate">
+        <div className="flex items-center justify-between mt-2 gap-2">
+          <span className="text-xs font-medium text-ink-950/40 dark:text-cream-100/40 truncate">
             {hostname(link.url)}
           </span>
-          <span className="text-xs text-neutral-400 dark:text-neutral-500 shrink-0 ml-2">
+          <span className="text-xs font-medium text-ink-950/40 dark:text-cream-100/40 shrink-0">
             {formatDate(link.created_at)}
           </span>
         </div>
-        {link.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {link.tags.slice(0, 3).map((t) => (
-              <span
-                key={t.id}
-                className="text-[11px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400"
-              >
-                #{t.name}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-1 mt-2">
+          {collectionName && collectionColor && (
+            <CollectionPill name={collectionName} color={collectionColor} />
+          )}
+          {link.tags.slice(0, 2).map((t) => (
+            <span
+              key={t.id}
+              className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-cream-200 dark:bg-ink-800 text-ink-950/60 dark:text-cream-100/60"
+            >
+              #{t.name}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

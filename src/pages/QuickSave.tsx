@@ -65,31 +65,37 @@ export default function QuickSave() {
 
   if (!url) {
     return (
-      <div className="min-h-svh flex flex-col items-center justify-center px-6 text-center bg-white dark:bg-neutral-950">
+      <div className="min-h-svh flex flex-col items-center justify-center px-6 text-center bg-cream-100 dark:bg-ink-950">
         <div className="text-3xl mb-2">⚠️</div>
-        <p className="text-sm text-neutral-600 dark:text-neutral-300">No link to save.</p>
-        <p className="text-xs text-neutral-400 mt-1">Open this via the Linkbox bookmarklet.</p>
+        <p className="text-sm font-bold text-ink-950 dark:text-cream-100">No link to save.</p>
+        <p className="text-xs font-medium text-ink-950/40 dark:text-cream-100/40 mt-1">
+          Open this via the Linkbox bookmarklet.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-svh flex flex-col items-center justify-center px-6 py-8 bg-white dark:bg-neutral-950 text-center">
+    <div className="min-h-svh flex flex-col items-center justify-center px-6 py-8 bg-cream-100 dark:bg-ink-950 text-center">
       {status === "saving" && (
         <>
           <div className="h-8 w-8 rounded-full border-2 border-violet-500 border-t-transparent animate-spin mb-4" />
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">Saving to Linkbox…</p>
+          <p className="text-sm font-bold text-ink-950/60 dark:text-cream-100/60">
+            Saving to Linkbox…
+          </p>
         </>
       )}
 
       {status === "error" && (
         <>
           <div className="text-3xl mb-2">⚠️</div>
-          <p className="text-sm text-neutral-600 dark:text-neutral-300">Couldn't save this link.</p>
+          <p className="text-sm font-bold text-ink-950 dark:text-cream-100">
+            Couldn't save this link.
+          </p>
           <button
             type="button"
             onClick={() => window.close()}
-            className="mt-4 text-sm text-violet-600 dark:text-violet-400 font-medium"
+            className="mt-4 text-sm text-violet-600 dark:text-violet-400 font-bold"
           >
             Close
           </button>
@@ -98,13 +104,13 @@ export default function QuickSave() {
 
       {status === "saved" && (
         <div className="w-full max-w-xs animate-pop-in">
-          <div className="h-12 w-12 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center text-2xl mb-3">
+          <div className="h-12 w-12 mx-auto rounded-full bg-emerald-300 flex items-center justify-center text-2xl mb-3 pop-border pop-shadow-sm">
             ✓
           </div>
-          <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-1">
+          <p className="text-sm font-extrabold text-ink-950 dark:text-cream-50 mb-1">
             Saved to Linkbox
           </p>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate mb-5">
+          <p className="text-xs font-medium text-ink-950/50 dark:text-cream-100/50 truncate mb-5">
             {title || url}
           </p>
 
@@ -112,7 +118,7 @@ export default function QuickSave() {
             <select
               value={collectionId}
               onChange={(e) => setCollectionId(e.target.value)}
-              className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500"
+              className="w-full rounded-lg bg-white dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 pop-border"
             >
               <option value="">Unsorted</option>
               {collections.map((c) => (
@@ -125,14 +131,14 @@ export default function QuickSave() {
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
               placeholder="tags, comma separated"
-              className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500"
+              className="w-full rounded-lg bg-white dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 pop-border"
             />
           </div>
 
           <button
             type="button"
             onClick={applyChangesAndClose}
-            className="w-full mt-4 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium py-2.5 transition-colors active:scale-[0.98]"
+            className="w-full mt-4 rounded-lg bg-violet-500 text-white text-sm font-extrabold py-2.5 pop-border pop-shadow-sm pop-press"
           >
             Done
           </button>

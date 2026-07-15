@@ -55,13 +55,13 @@ export default function BackupModal({ open, onClose, onExport, onImport }: Backu
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-2xl p-5 animate-pop-in"
+        className="w-full max-w-sm rounded-2xl bg-white dark:bg-ink-900 p-5 animate-pop-in pop-border pop-shadow"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-50">
+        <h3 className="text-base font-extrabold text-ink-950 dark:text-cream-50">
           Backup & Restore
         </h3>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+        <p className="text-sm font-medium text-ink-950/50 dark:text-cream-100/50 mt-1">
           Download everything as a JSON file, or restore from a previous export. Your data still
           lives in Supabase — this is just a local copy.
         </p>
@@ -70,11 +70,11 @@ export default function BackupModal({ open, onClose, onExport, onImport }: Backu
           <button
             type="button"
             onClick={handleExport}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium py-2.5 transition-colors active:scale-[0.98]"
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-violet-500 text-white text-sm font-extrabold py-2.5 pop-border pop-shadow-sm pop-press"
           >
             Export all data
           </button>
-          <label className="w-full flex items-center justify-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-200 text-sm font-medium py-2.5 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer">
+          <label className="w-full flex items-center justify-center gap-2 rounded-xl bg-white dark:bg-ink-800 text-ink-950 dark:text-cream-100 text-sm font-bold py-2.5 cursor-pointer pop-border pop-shadow-sm pop-press">
             {importing ? "Importing…" : "Import from file"}
             <input
               ref={fileRef}
@@ -90,7 +90,7 @@ export default function BackupModal({ open, onClose, onExport, onImport }: Backu
         <button
           type="button"
           onClick={onClose}
-          className="w-full text-center text-sm text-neutral-400 mt-4 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+          className="w-full text-center text-sm font-bold text-ink-950/40 dark:text-cream-100/40 mt-4 hover:text-ink-950/70 dark:hover:text-cream-100/70 transition-colors"
         >
           Close
         </button>

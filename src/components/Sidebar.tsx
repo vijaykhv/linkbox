@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Collection, Tag } from "../types";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { getCollectionColor } from "../lib/collectionColor";
 import ConfirmDialog from "./ConfirmDialog";
 
 interface SidebarProps {
@@ -75,19 +76,21 @@ export default function Sidebar({
         />
       )}
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-40 w-72 shrink-0 bg-neutral-50 dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 flex flex-col transition-transform duration-200 ${
+        className={`fixed md:static inset-y-0 left-0 z-40 w-72 shrink-0 bg-cream-50 dark:bg-ink-900 border-r border-cream-300/70 dark:border-ink-800 flex flex-col transition-transform duration-200 ${
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="flex items-center gap-2 px-4 h-16 shrink-0 border-b border-neutral-200 dark:border-neutral-800">
-          <div className="h-8 w-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-semibold text-sm">
+        <div className="flex items-center gap-2.5 px-4 h-16 shrink-0 border-b border-cream-300/70 dark:border-ink-800">
+          <div className="h-9 w-9 rounded-2xl bg-violet-500 text-white flex items-center justify-center font-extrabold text-base pop-border pop-shadow-sm">
             L
           </div>
-          <span className="font-semibold text-neutral-900 dark:text-neutral-50">Linkbox</span>
+          <span className="font-extrabold text-lg tracking-tight text-ink-950 dark:text-cream-50">
+            Linkbox
+          </span>
           <button
             type="button"
             onClick={onClose}
-            className="ml-auto md:hidden p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800 text-neutral-500"
+            className="ml-auto md:hidden p-1.5 rounded-lg hover:bg-cream-200 dark:hover:bg-ink-800 text-ink-950/50 dark:text-cream-100/50"
             aria-label="Close menu"
           >
             ✕
@@ -99,6 +102,7 @@ export default function Sidebar({
             <SidebarItem
               label="All Links"
               icon="📚"
+              chipBg="#e9dcff"
               count={allCount}
               active={activeCollectionId === null}
               onClick={() => onSelectCollection(null)}
@@ -106,6 +110,7 @@ export default function Sidebar({
             <SidebarItem
               label="Unsorted"
               icon="📥"
+              chipBg="#f9e6c4"
               count={unsortedCount}
               active={activeCollectionId === "unsorted"}
               onClick={() => onSelectCollection("unsorted")}
@@ -114,21 +119,22 @@ export default function Sidebar({
 
           <div>
             <div className="flex items-center justify-between px-2.5 mb-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
+              <span className="text-xs font-bold uppercase tracking-wide text-ink-950/40 dark:text-cream-100/40">
                 Collections
               </span>
               <button
                 type="button"
                 onClick={() => setAdding(true)}
-                className="text-neutral-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors text-lg leading-none w-5 h-5 flex items-center justify-center"
+                className="text-ink-950/40 dark:text-cream-100/40 hover:text-violet-600 dark:hover:text-violet-400 transition-colors text-lg leading-none w-5 h-5 flex items-center justify-center font-bold"
                 aria-label="New collection"
               >
                 +
               </button>
             </div>
             <div className="space-y-0.5">
-              {collections.map((c) =>
-                editingId === c.id ? (
+              {collections.map((c) => {
+                const color = getCollectionColor(c.id);
+                return editingId === c.id ? (
                   <input
                     key={c.id}
                     autoFocus
@@ -139,25 +145,26 @@ export default function Sidebar({
                       if (e.key === "Enter") handleRename(c.id);
                       if (e.key === "Escape") setEditingId(null);
                     }}
-                    className="w-full rounded-lg border border-violet-400 bg-white dark:bg-neutral-800 px-2.5 py-2 text-sm outline-none"
+                    className="w-full rounded-lg border border-violet-400 bg-white dark:bg-ink-800 px-2.5 py-2 text-sm outline-none"
                   />
                 ) : (
                   <div key={c.id} className="group relative">
                     <SidebarItem
                       label={c.name}
-                      icon="📁"
+                      icon={color.emoji}
+                      chipBg={color.bg}
                       count={countByCollection[c.id] ?? 0}
                       active={activeCollectionId === c.id}
                       onClick={() => onSelectCollection(c.id)}
                     />
-                    <div className="absolute right-1.5 top-1/2 -translate-y-1/2 hidden group-hover:flex gap-0.5 bg-neutral-50 dark:bg-neutral-900">
+                    <div className="absolute right-1.5 top-1/2 -translate-y-1/2 hidden group-hover:flex gap-0.5 bg-cream-50 dark:bg-ink-900">
                       <button
                         type="button"
                         onClick={() => {
                           setEditingId(c.id);
                           setEditingName(c.name);
                         }}
-                        className="p-1 rounded text-neutral-400 hover:text-violet-600"
+                        className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-violet-600"
                         aria-label={`Rename ${c.name}`}
                       >
                         ✎
@@ -165,15 +172,15 @@ export default function Sidebar({
                       <button
                         type="button"
                         onClick={() => setDeleteTarget(c)}
-                        className="p-1 rounded text-neutral-400 hover:text-red-600"
+                        className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-red-600"
                         aria-label={`Delete ${c.name}`}
                       >
                         🗑
                       </button>
                     </div>
                   </div>
-                ),
-              )}
+                );
+              })}
               {adding && (
                 <input
                   autoFocus
@@ -188,11 +195,11 @@ export default function Sidebar({
                     }
                   }}
                   placeholder="Collection name"
-                  className="w-full rounded-lg border border-violet-400 bg-white dark:bg-neutral-800 px-2.5 py-2 text-sm outline-none"
+                  className="w-full rounded-lg border border-violet-400 bg-white dark:bg-ink-800 px-2.5 py-2 text-sm outline-none"
                 />
               )}
               {collections.length === 0 && !adding && (
-                <p className="px-2.5 text-xs text-neutral-400 dark:text-neutral-500">
+                <p className="px-2.5 text-xs text-ink-950/40 dark:text-cream-100/40">
                   No collections yet
                 </p>
               )}
@@ -201,7 +208,7 @@ export default function Sidebar({
 
           {tags.length > 0 && (
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500 px-2.5 mb-1.5 block">
+              <span className="text-xs font-bold uppercase tracking-wide text-ink-950/40 dark:text-cream-100/40 px-2.5 mb-1.5 block">
                 Tags
               </span>
               <div className="flex flex-wrap gap-1.5 px-2.5">
@@ -210,10 +217,10 @@ export default function Sidebar({
                     key={t.id}
                     type="button"
                     onClick={() => onSelectTag(activeTagId === t.id ? null : t.id)}
-                    className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                    className={`text-xs font-bold px-2.5 py-1 rounded-full pop-border pop-press transition-colors ${
                       activeTagId === t.id
-                        ? "bg-violet-600 border-violet-600 text-white"
-                        : "border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:border-violet-400"
+                        ? "bg-violet-500 text-white pop-shadow-sm"
+                        : "bg-white dark:bg-ink-800 text-ink-950/70 dark:text-cream-100/70"
                     }`}
                   >
                     #{t.name}
@@ -224,40 +231,40 @@ export default function Sidebar({
           )}
         </div>
 
-        <div className="border-t border-neutral-200 dark:border-neutral-800 p-3 space-y-1">
+        <div className="border-t border-cream-300/70 dark:border-ink-800 p-3 space-y-1">
           <button
             type="button"
             onClick={onOpenBookmarklet}
-            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/60 dark:hover:bg-neutral-800 transition-colors"
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium text-ink-950/70 dark:text-cream-100/70 hover:bg-cream-200/70 dark:hover:bg-ink-800 transition-colors"
           >
             <span>🔖</span> Save from anywhere
           </button>
           <button
             type="button"
             onClick={onOpenBackup}
-            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/60 dark:hover:bg-neutral-800 transition-colors"
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium text-ink-950/70 dark:text-cream-100/70 hover:bg-cream-200/70 dark:hover:bg-ink-800 transition-colors"
           >
             <span>💾</span> Backup & Restore
           </button>
           <button
             type="button"
             onClick={toggleTheme}
-            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/60 dark:hover:bg-neutral-800 transition-colors"
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium text-ink-950/70 dark:text-cream-100/70 hover:bg-cream-200/70 dark:hover:bg-ink-800 transition-colors"
           >
             <span>{theme === "dark" ? "☀️" : "🌙"}</span>
             {theme === "dark" ? "Light mode" : "Dark mode"}
           </button>
           <div className="flex items-center gap-2.5 px-2.5 py-2">
-            <div className="h-7 w-7 rounded-full bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 flex items-center justify-center text-xs font-semibold shrink-0">
+            <div className="h-7 w-7 rounded-full bg-violet-200 dark:bg-violet-500/25 text-violet-800 dark:text-violet-300 flex items-center justify-center text-xs font-bold shrink-0">
               {user?.email?.[0].toUpperCase()}
             </div>
-            <span className="text-xs text-neutral-500 dark:text-neutral-400 truncate flex-1">
+            <span className="text-xs text-ink-950/50 dark:text-cream-100/50 truncate flex-1">
               {user?.email}
             </span>
             <button
               type="button"
               onClick={() => signOut()}
-              className="text-xs text-neutral-400 hover:text-red-600 transition-colors shrink-0"
+              className="text-xs font-medium text-ink-950/40 dark:text-cream-100/40 hover:text-red-600 transition-colors shrink-0"
             >
               Sign out
             </button>
@@ -283,12 +290,14 @@ export default function Sidebar({
 function SidebarItem({
   label,
   icon,
+  chipBg,
   count,
   active,
   onClick,
 }: {
   label: string;
   icon: string;
+  chipBg: string;
   count: number;
   active: boolean;
   onClick: () => void;
@@ -297,17 +306,22 @@ function SidebarItem({
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
+      className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-xl text-sm transition-colors ${
         active
-          ? "bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300 font-medium"
-          : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/60 dark:hover:bg-neutral-800"
+          ? "bg-violet-100 dark:bg-violet-500/15 text-violet-800 dark:text-violet-300 font-bold"
+          : "text-ink-950/75 dark:text-cream-100/75 font-medium hover:bg-cream-200/70 dark:hover:bg-ink-800"
       }`}
     >
-      <span>{icon}</span>
+      <span
+        className="h-7 w-7 rounded-lg flex items-center justify-center text-sm shrink-0 pop-border pop-shadow-sm"
+        style={{ backgroundColor: chipBg }}
+      >
+        {icon}
+      </span>
       <span className="truncate flex-1 text-left">{label}</span>
       {count > 0 && (
         <span
-          className={`text-xs rounded-full px-1.5 py-0.5 ${active ? "bg-violet-200 dark:bg-violet-500/25" : "bg-neutral-200 dark:bg-neutral-800 text-neutral-500"}`}
+          className={`text-xs font-semibold rounded-full px-1.5 py-0.5 ${active ? "bg-violet-200 dark:bg-violet-500/25" : "bg-cream-200 dark:bg-ink-800 text-ink-950/50 dark:text-cream-100/50"}`}
         >
           {count}
         </span>
