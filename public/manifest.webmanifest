@@ -14,7 +14,7 @@
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "share_target": {
-    "action": "/?save=1",
+    "action": "/",
     "method": "GET",
     "params": {
       "title": "title",

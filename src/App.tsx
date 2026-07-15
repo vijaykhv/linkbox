@@ -5,7 +5,13 @@ import AuthPage from "./pages/AuthPage";
 import AppShell from "./pages/AppShell";
 import QuickSave from "./pages/QuickSave";
 
-const isQuickSave = new URLSearchParams(window.location.search).has("save");
+// "save" is set by the bookmarklet/iOS Shortcut, which build the URL directly.
+// Android's Web Share Target instead navigates like a GET form submission,
+// which replaces the whole query string with just its mapped fields — so
+// "save" never survives that trip. "url"/"text" cover that case.
+const quickSaveParams = new URLSearchParams(window.location.search);
+const isQuickSave =
+  quickSaveParams.has("save") || quickSaveParams.has("url") || quickSaveParams.has("text");
 
 function Spinner() {
   return (
