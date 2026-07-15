@@ -3,15 +3,12 @@ import { getCollectionColor } from "../lib/collectionColor";
 import CollectionCard from "../components/CollectionCard";
 import IconButton from "../components/IconButton";
 import AddLinkBar from "../components/AddLinkBar";
+import EmptyState from "../components/EmptyState";
 
 interface HomeViewProps {
   collections: Collection[];
   countByCollection: Record<string, number>;
-  allCount: number;
-  unsortedCount: number;
   onOpenCollection: (id: string) => void;
-  onOpenAll: () => void;
-  onOpenUnsorted: () => void;
   onOpenNewCollection: () => void;
   onOpenSearch: () => void;
   onCreateLink: (input: {
@@ -30,11 +27,7 @@ interface HomeViewProps {
 export default function HomeView({
   collections,
   countByCollection,
-  allCount,
-  unsortedCount,
   onOpenCollection,
-  onOpenAll,
-  onOpenUnsorted,
   onOpenNewCollection,
   onOpenSearch,
   onCreateLink,
@@ -58,29 +51,25 @@ export default function HomeView({
       <h2 className="text-lg font-extrabold text-ink-950 dark:text-cream-50 mt-8 mb-3">
         My Collections
       </h2>
-      <div className="grid grid-cols-2 gap-4">
-        <CollectionCard
-          name="All Links"
-          color={{ bg: "#e9dcff", text: "#6b3fbf", icon: "#b983ff", emoji: "📚" }}
-          linkCount={allCount}
-          onOpen={onOpenAll}
+      {collections.length === 0 ? (
+        <EmptyState
+          icon="📁"
+          title="No collections yet"
+          description="Tap the folder icon above to create your first one."
         />
-        <CollectionCard
-          name="Unsorted"
-          color={{ bg: "#fff0b0", text: "#a87a00", icon: "#ffd93d", emoji: "📥" }}
-          linkCount={unsortedCount}
-          onOpen={onOpenUnsorted}
-        />
-        {collections.map((c) => (
-          <CollectionCard
-            key={c.id}
-            name={c.name}
-            color={getCollectionColor(c.id)}
-            linkCount={countByCollection[c.id] ?? 0}
-            onOpen={() => onOpenCollection(c.id)}
-          />
-        ))}
-      </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          {collections.map((c) => (
+            <CollectionCard
+              key={c.id}
+              name={c.name}
+              color={getCollectionColor(c.id)}
+              linkCount={countByCollection[c.id] ?? 0}
+              onOpen={() => onOpenCollection(c.id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

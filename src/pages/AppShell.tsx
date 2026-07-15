@@ -216,11 +216,7 @@ export default function AppShell() {
           <HomeView
             collections={topLevelCollections}
             countByCollection={countByCollection}
-            allCount={links.length}
-            unsortedCount={unsortedCount}
             onOpenCollection={(id) => setActiveCollectionId(id)}
-            onOpenAll={() => setActiveCollectionId("all")}
-            onOpenUnsorted={() => setActiveCollectionId("unsorted")}
             onOpenNewCollection={() => setPrompt({ mode: "add-collection" })}
             onOpenSearch={() => setActiveCollectionId("all")}
             onCreateLink={addLink}
