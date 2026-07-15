@@ -8,7 +8,8 @@ export interface CollectionColor {
 // A distinct, stable color + icon per collection, cycling through a bright
 // palette by hashing the collection's id — matches the "colorful folder"
 // look where every collection reads at a glance instead of a uniform gray.
-const PALETTE: CollectionColor[] = [
+// Also the picker's source of truth for user-chosen colors (color_index).
+export const PALETTE: CollectionColor[] = [
   { bg: "#ffd9ea", text: "#b23368", icon: "#ff6fa8", emoji: "🩷" },
   { bg: "#d8f5c9", text: "#3f7d1f", icon: "#7ed957", emoji: "🌿" },
   { bg: "#d3ecff", text: "#1d6fbf", icon: "#5ac8fa", emoji: "🌀" },
@@ -28,6 +29,15 @@ function hash(str: string): number {
   return Math.abs(h);
 }
 
-export function getCollectionColor(id: string): CollectionColor {
-  return PALETTE[hash(id) % PALETTE.length];
+export function getCollectionColorIndex(c: { id: string; color_index?: number | null }): number {
+  return c.color_index != null ? c.color_index % PALETTE.length : hash(c.id) % PALETTE.length;
+}
+
+export function getCollectionColor(c: {
+  id: string;
+  color_index?: number | null;
+  emoji?: string | null;
+}): CollectionColor {
+  const base = PALETTE[getCollectionColorIndex(c)];
+  return c.emoji ? { ...base, emoji: c.emoji } : base;
 }

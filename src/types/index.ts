@@ -3,6 +3,10 @@ export interface Collection {
   user_id: string;
   name: string;
   parent_id: string | null;
+  color_index: number | null;
+  emoji: string | null;
+  share_token: string;
+  is_shared: boolean;
   created_at: string;
 }
 

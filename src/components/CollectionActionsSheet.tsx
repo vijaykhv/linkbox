@@ -3,6 +3,7 @@ interface CollectionActionsSheetProps {
   onClose: () => void;
   onSelectLinks: () => void;
   onCreateSubcollection: () => void;
+  onShare: () => void;
   onRename: () => void;
   onDelete: () => void;
 }
@@ -39,6 +40,7 @@ export default function CollectionActionsSheet({
   onClose,
   onSelectLinks,
   onCreateSubcollection,
+  onShare,
   onRename,
   onDelete,
 }: CollectionActionsSheetProps) {
@@ -62,6 +64,8 @@ export default function CollectionActionsSheet({
         <SheetItem icon="☑️" label="Select Links" onClick={() => run(onSelectLinks)} />
         <div className="h-px bg-cream-200 dark:bg-ink-800 mx-2" />
         <SheetItem icon="📁" label="Create Sub-collection" onClick={() => run(onCreateSubcollection)} />
+        <div className="h-px bg-cream-200 dark:bg-ink-800 mx-2" />
+        <SheetItem icon="🔗" label="Share Collection" onClick={() => run(onShare)} />
         <div className="h-px bg-cream-200 dark:bg-ink-800 mx-2" />
         <SheetItem icon="✎" label="Rename Collection" onClick={() => run(onRename)} />
         <SheetItem icon="🗑" label="Delete Collection" danger onClick={() => run(onDelete)} />

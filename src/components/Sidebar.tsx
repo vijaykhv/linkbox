@@ -16,7 +16,7 @@ interface SidebarProps {
   onSelectCollection: (id: string | null | "unsorted" | "all") => void;
   onGoHome: () => void;
   onSelectTag: (id: string | null) => void;
-  onAddCollection: (name: string) => Promise<unknown>;
+  onRequestAddCollection: () => void;
   onRenameCollection: (id: string, name: string) => Promise<unknown>;
   onDeleteCollection: (id: string) => Promise<unknown>;
   onOpenBackup: () => void;
@@ -36,7 +36,7 @@ export default function Sidebar({
   onSelectCollection,
   onGoHome,
   onSelectTag,
-  onAddCollection,
+  onRequestAddCollection,
   onRenameCollection,
   onDeleteCollection,
   onOpenBackup,
@@ -46,21 +46,18 @@ export default function Sidebar({
 }: SidebarProps) {
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const [adding, setAdding] = useState(false);
-  const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<Collection | null>(null);
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
 
-  async function handleAdd() {
-    const name = newName.trim();
-    if (!name) {
-      setAdding(false);
-      return;
-    }
-    await onAddCollection(name);
-    setNewName("");
-    setAdding(false);
+  function toggleCollapsed(id: string) {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   }
 
   async function handleRename(id: string) {
@@ -72,7 +69,9 @@ export default function Sidebar({
   function renderCollectionTree(parentId: string | null, depth: number) {
     const level = collections.filter((c) => c.parent_id === parentId);
     return level.map((c) => {
-      const color = getCollectionColor(c.id);
+      const color = getCollectionColor(c);
+      const hasChildren = collections.some((x) => x.parent_id === c.id);
+      const collapsed = collapsedIds.has(c.id);
       return (
         <div key={c.id} style={{ marginLeft: depth * 14 }}>
           {editingId === c.id ? (
@@ -88,39 +87,55 @@ export default function Sidebar({
               className="w-full rounded-lg border border-violet-400 bg-white dark:bg-ink-800 px-2.5 py-2 text-sm outline-none"
             />
           ) : (
-            <div className="group relative">
-              <SidebarItem
-                label={c.name}
-                icon={color.emoji}
-                chipBg={color.bg}
-                count={countByCollection[c.id] ?? 0}
-                active={activeCollectionId === c.id}
-                onClick={() => onSelectCollection(c.id)}
-              />
-              <div className="absolute right-1.5 top-1/2 -translate-y-1/2 hidden group-hover:flex gap-0.5 bg-cream-50 dark:bg-ink-900">
+            <div className="group relative flex items-center gap-0.5">
+              {hasChildren ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    setEditingId(c.id);
-                    setEditingName(c.name);
-                  }}
-                  className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-violet-600"
-                  aria-label={`Rename ${c.name}`}
+                  onClick={() => toggleCollapsed(c.id)}
+                  className="h-5 w-5 shrink-0 flex items-center justify-center text-ink-950/40 dark:text-cream-100/40 hover:text-violet-600 dark:hover:text-violet-400 transition-transform"
+                  style={{ transform: collapsed ? "rotate(-90deg)" : "rotate(0deg)" }}
+                  aria-label={collapsed ? `Expand ${c.name}` : `Collapse ${c.name}`}
+                  aria-expanded={!collapsed}
                 >
-                  ✎
+                  ▾
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setDeleteTarget(c)}
-                  className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-red-600"
-                  aria-label={`Delete ${c.name}`}
-                >
-                  🗑
-                </button>
+              ) : (
+                <span className="h-5 w-5 shrink-0" aria-hidden />
+              )}
+              <div className="min-w-0 flex-1 relative">
+                <SidebarItem
+                  label={c.name}
+                  icon={color.emoji}
+                  chipBg={color.bg}
+                  count={countByCollection[c.id] ?? 0}
+                  active={activeCollectionId === c.id}
+                  onClick={() => onSelectCollection(c.id)}
+                />
+                <div className="absolute right-1.5 top-1/2 -translate-y-1/2 hidden group-hover:flex gap-0.5 bg-cream-50 dark:bg-ink-900">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingId(c.id);
+                      setEditingName(c.name);
+                    }}
+                    className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-violet-600"
+                    aria-label={`Rename ${c.name}`}
+                  >
+                    ✎
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(c)}
+                    className="p-1 rounded text-ink-950/40 dark:text-cream-100/40 hover:text-red-600"
+                    aria-label={`Delete ${c.name}`}
+                  >
+                    🗑
+                  </button>
+                </div>
               </div>
             </div>
           )}
-          {renderCollectionTree(c.id, depth + 1)}
+          {!collapsed && renderCollectionTree(c.id, depth + 1)}
         </div>
       );
     });
@@ -190,7 +205,7 @@ export default function Sidebar({
               </span>
               <button
                 type="button"
-                onClick={() => setAdding(true)}
+                onClick={onRequestAddCollection}
                 className="text-ink-950/40 dark:text-cream-100/40 hover:text-violet-600 dark:hover:text-violet-400 transition-colors text-lg leading-none w-5 h-5 flex items-center justify-center font-bold"
                 aria-label="New collection"
               >
@@ -199,24 +214,7 @@ export default function Sidebar({
             </div>
             <div className="space-y-0.5">
               {renderCollectionTree(null, 0)}
-              {adding && (
-                <input
-                  autoFocus
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  onBlur={handleAdd}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleAdd();
-                    if (e.key === "Escape") {
-                      setAdding(false);
-                      setNewName("");
-                    }
-                  }}
-                  placeholder="Collection name"
-                  className="w-full rounded-lg border border-violet-400 bg-white dark:bg-ink-800 px-2.5 py-2 text-sm outline-none"
-                />
-              )}
-              {collections.length === 0 && !adding && (
+              {collections.length === 0 && (
                 <p className="px-2.5 text-xs text-ink-950/40 dark:text-cream-100/40">
                   No collections yet
                 </p>

@@ -63,7 +63,7 @@ export default function HomeView({
             <CollectionCard
               key={c.id}
               name={c.name}
-              color={getCollectionColor(c.id)}
+              color={getCollectionColor(c)}
               linkCount={countByCollection[c.id] ?? 0}
               onOpen={() => onOpenCollection(c.id)}
             />

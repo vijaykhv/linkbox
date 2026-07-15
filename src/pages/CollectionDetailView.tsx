@@ -144,7 +144,7 @@ export default function CollectionDetailView({
                   <CollectionCard
                     key={c.id}
                     name={c.name}
-                    color={getCollectionColor(c.id)}
+                    color={getCollectionColor(c)}
                     linkCount={countByCollection[c.id] ?? 0}
                     onOpen={() => onOpenSubCollection(c.id)}
                   />
@@ -211,7 +211,7 @@ export default function CollectionDetailView({
                     selected={selectedIds.has(link.id)}
                     selectionMode={selectionMode}
                     collectionName={kind === "all" ? (collection?.name ?? null) : null}
-                    collectionColor={kind === "all" && collection ? getCollectionColor(collection.id) : null}
+                    collectionColor={kind === "all" && collection ? getCollectionColor(collection) : null}
                     onOpen={() => onOpenLink(link.id)}
                     onToggleSelect={() => onToggleSelect(link.id)}
                     onEnterSelectionMode={() => onEnterSelectionMode(link.id)}
@@ -231,7 +231,7 @@ export default function CollectionDetailView({
                     selected={selectedIds.has(link.id)}
                     selectionMode={selectionMode}
                     collectionName={kind === "all" ? (collection?.name ?? null) : null}
-                    collectionColor={kind === "all" && collection ? getCollectionColor(collection.id) : null}
+                    collectionColor={kind === "all" && collection ? getCollectionColor(collection) : null}
                     onOpen={() => onOpenLink(link.id)}
                     onToggleSelect={() => onToggleSelect(link.id)}
                     onEnterSelectionMode={() => onEnterSelectionMode(link.id)}

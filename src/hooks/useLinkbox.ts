@@ -223,11 +223,21 @@ export function useLinkbox() {
   );
 
   const addCollection = useCallback(
-    async (name: string, parentId?: string | null) => {
+    async (
+      name: string,
+      parentId?: string | null,
+      appearance?: { colorIndex?: number | null; emoji?: string | null },
+    ) => {
       if (!user) throw new Error("Not signed in");
       const { data, error } = await supabase
         .from("collections")
-        .insert({ name, user_id: user.id, parent_id: parentId ?? null })
+        .insert({
+          name,
+          user_id: user.id,
+          parent_id: parentId ?? null,
+          color_index: appearance?.colorIndex ?? null,
+          emoji: appearance?.emoji ?? null,
+        })
         .select("*")
         .single();
       if (error) throw error;
@@ -240,6 +250,46 @@ export function useLinkbox() {
   const renameCollection = useCallback(
     async (id: string, name: string) => {
       const { error } = await supabase.from("collections").update({ name }).eq("id", id);
+      if (error) throw error;
+      await fetchAll();
+    },
+    [fetchAll],
+  );
+
+  const updateCollection = useCallback(
+    async (
+      id: string,
+      patch: { name?: string; colorIndex?: number | null; emoji?: string | null },
+    ) => {
+      const { error } = await supabase
+        .from("collections")
+        .update({
+          ...(patch.name !== undefined ? { name: patch.name } : {}),
+          ...(patch.colorIndex !== undefined ? { color_index: patch.colorIndex } : {}),
+          ...(patch.emoji !== undefined ? { emoji: patch.emoji } : {}),
+        })
+        .eq("id", id);
+      if (error) throw error;
+      await fetchAll();
+    },
+    [fetchAll],
+  );
+
+  const setCollectionShared = useCallback(
+    async (id: string, shared: boolean) => {
+      const { error } = await supabase.from("collections").update({ is_shared: shared }).eq("id", id);
+      if (error) throw error;
+      await fetchAll();
+    },
+    [fetchAll],
+  );
+
+  const regenerateShareToken = useCallback(
+    async (id: string) => {
+      const { error } = await supabase
+        .from("collections")
+        .update({ share_token: crypto.randomUUID() })
+        .eq("id", id);
       if (error) throw error;
       await fetchAll();
     },
@@ -276,7 +326,12 @@ export function useLinkbox() {
       for (const c of data.collections) {
         const { data: inserted, error } = await supabase
           .from("collections")
-          .insert({ name: c.name, user_id: user.id })
+          .insert({
+            name: c.name,
+            user_id: user.id,
+            color_index: c.color_index,
+            emoji: c.emoji,
+          })
           .select("id")
           .single();
         if (error) throw error;
@@ -359,6 +414,9 @@ export function useLinkbox() {
     moveLinksToCollection,
     addCollection,
     renameCollection,
+    updateCollection,
+    setCollectionShared,
+    regenerateShareToken,
     deleteCollection,
     exportAll,
     importData,

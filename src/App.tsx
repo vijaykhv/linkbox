@@ -4,6 +4,7 @@ import { ToastProvider } from "./context/ToastContext";
 import AuthPage from "./pages/AuthPage";
 import AppShell from "./pages/AppShell";
 import QuickSave from "./pages/QuickSave";
+import SharedCollectionPage from "./pages/SharedCollectionPage";
 
 // "save" is set by the bookmarklet/iOS Shortcut, which build the URL directly.
 // Android's Web Share Target instead navigates like a GET form submission,
@@ -12,6 +13,9 @@ import QuickSave from "./pages/QuickSave";
 const quickSaveParams = new URLSearchParams(window.location.search);
 const isQuickSave =
   quickSaveParams.has("save") || quickSaveParams.has("url") || quickSaveParams.has("text");
+
+// Public share links (?shared=<token>) render with no auth requirement at all.
+const sharedToken = new URLSearchParams(window.location.search).get("shared");
 
 function Spinner() {
   return (
@@ -34,6 +38,14 @@ function QuickSaveGate() {
 }
 
 export default function App() {
+  if (sharedToken) {
+    return (
+      <ThemeProvider>
+        <SharedCollectionPage token={sharedToken} />
+      </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider>
       <ToastProvider>

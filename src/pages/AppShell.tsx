@@ -9,16 +9,18 @@ import LinkDetailModal from "../components/LinkDetailModal";
 import BackupModal from "../components/BackupModal";
 import BookmarkletModal from "../components/BookmarkletModal";
 import CollectionActionsSheet from "../components/CollectionActionsSheet";
-import PromptDialog from "../components/PromptDialog";
+import CollectionEditorDialog from "../components/CollectionEditorDialog";
+import ShareCollectionModal from "../components/ShareCollectionModal";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { getCollectionColor, getCollectionColorIndex } from "../lib/collectionColor";
 import type { LinkWithTags, LinkboxExport, ViewMode } from "../types";
 
 type CollectionFilter = string | null | "unsorted" | "all";
 
-type PromptState =
+type EditorState =
   | { mode: "add-collection" }
   | { mode: "add-subcollection"; parentId: string }
-  | { mode: "rename"; targetId: string; initialValue: string };
+  | { mode: "rename"; targetId: string; initialName: string; initialColorIndex: number; initialEmoji: string };
 
 export default function AppShell() {
   const {
@@ -35,6 +37,9 @@ export default function AppShell() {
     moveLinksToCollection,
     addCollection,
     renameCollection,
+    updateCollection,
+    setCollectionShared,
+    regenerateShareToken,
     deleteCollection,
     exportAll,
     importData,
@@ -52,7 +57,8 @@ export default function AppShell() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeLinkId, setActiveLinkId] = useState<string | null>(null);
   const [actionsSheetOpen, setActionsSheetOpen] = useState(false);
-  const [prompt, setPrompt] = useState<PromptState | null>(null);
+  const [editor, setEditor] = useState<EditorState | null>(null);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const [deleteCollectionTarget, setDeleteCollectionTarget] = useState<string | null>(null);
 
   const countByCollection = useMemo(() => {
@@ -167,16 +173,17 @@ export default function AppShell() {
     }
   }
 
-  async function handlePromptConfirm(value: string) {
-    if (!prompt) return;
-    if (prompt.mode === "add-collection") {
-      await addCollection(value, null);
-    } else if (prompt.mode === "add-subcollection") {
-      await addCollection(value, prompt.parentId);
-    } else if (prompt.mode === "rename") {
-      await renameCollection(prompt.targetId, value);
+  async function handleEditorConfirm(value: { name: string; colorIndex: number; emoji: string }) {
+    if (!editor) return;
+    const appearance = { colorIndex: value.colorIndex, emoji: value.emoji };
+    if (editor.mode === "add-collection") {
+      await addCollection(value.name, null, appearance);
+    } else if (editor.mode === "add-subcollection") {
+      await addCollection(value.name, editor.parentId, appearance);
+    } else if (editor.mode === "rename") {
+      await updateCollection(editor.targetId, { name: value.name, ...appearance });
     }
-    setPrompt(null);
+    setEditor(null);
   }
 
   return (
@@ -198,7 +205,7 @@ export default function AppShell() {
           setSidebarOpen(false);
         }}
         onSelectTag={setActiveTagId}
-        onAddCollection={(name) => addCollection(name, null)}
+        onRequestAddCollection={() => setEditor({ mode: "add-collection" })}
         onRenameCollection={renameCollection}
         onDeleteCollection={async (id) => {
           if (activeCollectionId === id) setActiveCollectionId(null);
@@ -217,7 +224,7 @@ export default function AppShell() {
             collections={topLevelCollections}
             countByCollection={countByCollection}
             onOpenCollection={(id) => setActiveCollectionId(id)}
-            onOpenNewCollection={() => setPrompt({ mode: "add-collection" })}
+            onOpenNewCollection={() => setEditor({ mode: "add-collection" })}
             onOpenSearch={() => setActiveCollectionId("all")}
             onCreateLink={addLink}
             onMetadataResolved={(id, patch) => updateLink(id, patch)}
@@ -321,28 +328,51 @@ export default function AppShell() {
           activeCollectionId &&
           activeCollectionId !== "all" &&
           activeCollectionId !== "unsorted" &&
-          setPrompt({ mode: "add-subcollection", parentId: activeCollectionId })
+          setEditor({ mode: "add-subcollection", parentId: activeCollectionId })
         }
+        onShare={() => activeCollection && setShareModalOpen(true)}
         onRename={() =>
-          activeCollection && setPrompt({ mode: "rename", targetId: activeCollection.id, initialValue: activeCollection.name })
+          activeCollection &&
+          setEditor({
+            mode: "rename",
+            targetId: activeCollection.id,
+            initialName: activeCollection.name,
+            initialColorIndex: getCollectionColorIndex(activeCollection),
+            initialEmoji: getCollectionColor(activeCollection).emoji,
+          })
         }
         onDelete={() => activeCollection && setDeleteCollectionTarget(activeCollection.id)}
       />
 
-      <PromptDialog
-        open={prompt !== null}
+      <CollectionEditorDialog
+        open={editor !== null}
         title={
-          prompt?.mode === "rename"
+          editor?.mode === "rename"
             ? "Rename collection"
-            : prompt?.mode === "add-subcollection"
+            : editor?.mode === "add-subcollection"
               ? "New sub-collection"
               : "New collection"
         }
-        confirmLabel={prompt?.mode === "rename" ? "Rename" : "Create"}
-        initialValue={prompt?.mode === "rename" ? prompt.initialValue : ""}
-        placeholder="Collection name"
-        onConfirm={handlePromptConfirm}
-        onCancel={() => setPrompt(null)}
+        confirmLabel={editor?.mode === "rename" ? "Save" : "Create"}
+        initialName={editor?.mode === "rename" ? editor.initialName : ""}
+        initialColorIndex={editor?.mode === "rename" ? editor.initialColorIndex : undefined}
+        initialEmoji={editor?.mode === "rename" ? editor.initialEmoji : undefined}
+        onConfirm={handleEditorConfirm}
+        onCancel={() => setEditor(null)}
+      />
+
+      <ShareCollectionModal
+        collection={shareModalOpen ? activeCollection : null}
+        onClose={() => setShareModalOpen(false)}
+        onToggleShared={async (shared) => {
+          if (!activeCollection) return;
+          await setCollectionShared(activeCollection.id, shared);
+        }}
+        onRegenerate={async () => {
+          if (!activeCollection) return;
+          await regenerateShareToken(activeCollection.id);
+          show("New link generated", "success");
+        }}
       />
 
       <ConfirmDialog
