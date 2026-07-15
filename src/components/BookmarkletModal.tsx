@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 interface BookmarkletModalProps {
   open: boolean;
   onClose: () => void;
@@ -10,8 +12,21 @@ function buildBookmarklet(): string {
 }
 
 export default function BookmarkletModal({ open, onClose }: BookmarkletModalProps) {
-  if (!open) return null;
+  const anchorRef = useRef<HTMLAnchorElement>(null);
   const href = buildBookmarklet();
+
+  useEffect(() => {
+    // React 19 sanitizes href="javascript:..." passed as a JSX prop (it swaps in a
+    // decoy that throws "React has blocked a javascript: URL..."), which breaks the
+    // one legitimate use case for that pattern: bookmarklets. Setting the attribute
+    // imperatively bypasses React's prop diffing entirely, so the real code survives
+    // being dragged out to the bookmarks bar.
+    if (open && anchorRef.current) {
+      anchorRef.current.setAttribute("href", href);
+    }
+  }, [open, href]);
+
+  if (!open) return null;
 
   return (
     <div
@@ -33,7 +48,7 @@ export default function BookmarkletModal({ open, onClose }: BookmarkletModalProp
         <div className="flex justify-center my-5">
           {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a
-            href={href}
+            ref={anchorRef}
             onClick={(e) => e.preventDefault()}
             draggable
             className="inline-flex items-center gap-2 rounded-xl bg-violet-600 text-white text-sm font-medium px-4 py-2.5 cursor-grab active:cursor-grabbing shadow-lg shadow-violet-600/20 select-none"
