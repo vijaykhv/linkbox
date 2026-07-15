@@ -43,3 +43,6 @@ and tags synced across devices.
 - JSON export/import for backup
 - Realtime sync across tabs/devices
 - Dark/light mode, mobile-responsive layout
+
+---
+Deployed via Vercel, auto-deploying from `main`.
