@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in to Linkbox</title>
+    <style>
+      @media (prefers-color-scheme: dark) {
+        body, .bg { background-color: #16120c !important; }
+        .card { background-color: #201a12 !important; border-color: #fdf3e2 !important; }
+        .code-box { background-color: #16120c !important; border-color: #fdf3e2 !important; }
+        .text-primary { color: #fdf3e2 !important; }
+        .text-muted { color: rgba(253, 243, 226, 0.55) !important; }
+        .divider { border-color: rgba(253, 243, 226, 0.15) !important; }
+      }
+    </style>
+  </head>
+  <body class="bg" style="margin:0; padding:0; background-color:#fdf3e2; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fdf3e2; padding:40px 16px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="480" cellpadding="0" cellspacing="0" class="card" style="max-width:480px; width:100%; background-color:#ffffff; border:2px solid #16120c; border-radius:20px;">
+            <tr>
+              <td style="padding:32px 32px 24px 32px;">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="width:36px; height:36px; background-color:#8b5cf6; border:2px solid #16120c; border-radius:12px; text-align:center; vertical-align:middle;">
+                      <span style="color:#ffffff; font-weight:800; font-size:16px;">L</span>
+                    </td>
+                    <td style="padding-left:10px;">
+                      <span class="text-primary" style="color:#16120c; font-weight:800; font-size:18px; letter-spacing:-0.01em;">Linkbox</span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 32px;">
+                <h1 class="text-primary" style="margin:0 0 12px 0; color:#16120c; font-size:24px; font-weight:800; letter-spacing:-0.01em;">
+                  Sign in to Linkbox
+                </h1>
+                <p class="text-muted" style="margin:0 0 28px 0; color:rgba(22,18,12,0.6); font-size:15px; line-height:1.5;">
+                  Tap the button below to sign in — no password needed.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 32px;">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="background-color:#8b5cf6; border:2px solid #16120c; border-radius:12px; box-shadow:3px 3px 0 0 #16120c;">
+                      <a
+                        href="{{ .ConfirmationURL }}"
+                        style="display:inline-block; padding:12px 28px; color:#ffffff; font-weight:800; font-size:15px; text-decoration:none;"
+                      >
+                        Sign in
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:28px 32px 0 32px;">
+                <hr class="divider" style="border:none; border-top:1px solid rgba(22,18,12,0.1); margin:0 0 20px 0;" />
+                <p class="text-muted" style="margin:0 0 12px 0; color:rgba(22,18,12,0.45); font-size:13px; line-height:1.5;">
+                  Or, if your device asked for a code, enter this:
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 32px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td class="code-box" style="background-color:#fdf3e2; border:2px solid #16120c; border-radius:12px; padding:16px; text-align:center;">
+                      <span class="text-primary" style="color:#16120c; font-size:28px; font-weight:800; letter-spacing:0.3em;">{{ .Token }}</span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 32px 0 32px;">
+                <p class="text-muted" style="margin:0 0 8px 0; color:rgba(22,18,12,0.45); font-size:13px; line-height:1.5;">
+                  Button not working? Paste this link into your browser:
+                </p>
+                <p style="margin:0; word-break:break-all;">
+                  <a href="{{ .ConfirmationURL }}" style="color:#8b5cf6; font-size:13px;">{{ .ConfirmationURL }}</a>
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 32px 32px 32px;">
+                <p class="text-muted" style="margin:0; color:rgba(22,18,12,0.4); font-size:12px; line-height:1.5;">
+                  This link and code expire in 1 hour. If you didn't request this, you can safely ignore this email.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

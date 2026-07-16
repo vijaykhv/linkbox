@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLinkbox } from "../hooks/useLinkbox";
 import { fetchLinkMetadata } from "../lib/metadata";
 import { normalizeUrl } from "../lib/url";
@@ -21,7 +21,7 @@ function extractUrlFromText(text: string): string {
 let hasSaved = false;
 
 export default function QuickSave() {
-  const { collections, addLink, updateLink, setLinkTags } = useLinkbox();
+  const { collections, addLink, updateLink } = useLinkbox();
   const pageTitle = getParam("title");
   const url = normalizeUrl(getParam("url") || extractUrlFromText(getParam("text")));
 
@@ -29,7 +29,10 @@ export default function QuickSave() {
   const [linkId, setLinkId] = useState<string | null>(null);
   const [title, setTitle] = useState(pageTitle);
   const [collectionId, setCollectionId] = useState("");
-  const [tagsInput, setTagsInput] = useState("");
+  // Tracks whether the user has typed into the title field, so the
+  // background metadata fetch (below) doesn't clobber their edit once it
+  // resolves.
+  const titleEdited = useRef(false);
 
   useEffect(() => {
     if (hasSaved || !url) return;
@@ -41,7 +44,7 @@ export default function QuickSave() {
         setStatus("saved");
         const meta = await fetchLinkMetadata(url);
         if (meta) {
-          if (meta.title) setTitle(meta.title);
+          if (meta.title && !titleEdited.current) setTitle(meta.title);
           await updateLink(created.id, {
             title: meta.title,
             description: meta.description,
@@ -56,16 +59,10 @@ export default function QuickSave() {
 
   async function applyChangesAndClose() {
     if (linkId) {
-      if (collectionId) await updateLink(linkId, { collection_id: collectionId });
-      if (tagsInput.trim()) {
-        await setLinkTags(
-          linkId,
-          tagsInput
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean),
-        );
-      }
+      const patch: { collection_id?: string; title?: string } = {};
+      if (collectionId) patch.collection_id = collectionId;
+      if (title.trim()) patch.title = title.trim();
+      if (Object.keys(patch).length > 0) await updateLink(linkId, patch);
     }
     // Works for the bookmarklet's popup window. When launched instead as an
     // installed PWA (Android share target, iOS Shortcut), the browser won't
@@ -123,10 +120,19 @@ export default function QuickSave() {
             Saved to Linkbox
           </p>
           <p className="text-xs font-medium text-ink-950/50 dark:text-cream-100/50 truncate mb-5">
-            {title || url}
+            {url}
           </p>
 
           <div className="space-y-2 text-left">
+            <input
+              value={title}
+              onChange={(e) => {
+                titleEdited.current = true;
+                setTitle(e.target.value);
+              }}
+              placeholder="Title"
+              className="w-full rounded-lg bg-white dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 pop-border"
+            />
             <select
               value={collectionId}
               onChange={(e) => setCollectionId(e.target.value)}
@@ -139,13 +145,10 @@ export default function QuickSave() {
                 </option>
               ))}
             </select>
-            <input
-              value={tagsInput}
-              onChange={(e) => setTagsInput(e.target.value)}
-              placeholder="tags, comma separated"
-              className="w-full rounded-lg bg-white dark:bg-ink-800 px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-violet-400 pop-border"
-            />
           </div>
+          <p className="text-[11px] font-medium text-ink-950/40 dark:text-cream-100/40 mt-2">
+            Tags can be added later from the link's detail view.
+          </p>
 
           <button
             type="button"
