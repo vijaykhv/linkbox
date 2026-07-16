@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { getCollectionColor } from "../lib/collectionColor";
 import ConfirmDialog from "./ConfirmDialog";
+import Logo from "./Logo";
 
 interface SidebarProps {
   collections: Collection[];
@@ -161,9 +162,7 @@ export default function Sidebar({
             className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
             aria-label="Go home"
           >
-            <div className="h-9 w-9 rounded-2xl bg-violet-500 text-white flex items-center justify-center font-extrabold text-base pop-border pop-shadow-sm">
-              L
-            </div>
+            <Logo size={36} />
             <span className="font-extrabold text-lg tracking-tight text-ink-950 dark:text-cream-50">
               Linkbox
             </span>

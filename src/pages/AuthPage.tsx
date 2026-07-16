@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../context/AuthContext";
+import Logo from "../components/Logo";
 
 type Mode = "sign-in" | "sign-up" | "magic-link";
 
@@ -52,9 +53,7 @@ export default function AuthPage() {
     <div className="min-h-svh flex items-center justify-center px-4 bg-cream-100 dark:bg-ink-950">
       <div className="w-full max-w-sm animate-slide-up">
         <div className="text-center mb-8">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500 text-white text-2xl font-extrabold mb-4 pop-border pop-shadow">
-            L
-          </div>
+          <Logo size={64} className="mb-4 mx-auto" />
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-950 dark:text-cream-50">
             Linkbox
           </h1>

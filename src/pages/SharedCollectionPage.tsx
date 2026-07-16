@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchSharedCollection, type SharedCollection } from "../lib/sharedCollection";
 import { getCollectionColor } from "../lib/collectionColor";
 import EmptyState from "../components/EmptyState";
+import Logo from "../components/Logo";
 
 function hostname(url: string): string {
   try {
@@ -38,9 +39,7 @@ export default function SharedCollectionPage({ token }: SharedCollectionPageProp
       <div className="sticky top-0 z-10 bg-cream-100/90 dark:bg-ink-950/90 backdrop-blur border-b-2 border-ink-950 dark:border-cream-100/85">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center gap-2.5">
           <a href="/" className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-2xl bg-violet-500 text-white flex items-center justify-center font-extrabold text-base pop-border pop-shadow-sm">
-              L
-            </div>
+            <Logo size={36} />
             <span className="font-extrabold text-lg tracking-tight text-ink-950 dark:text-cream-50">
               Linkbox
             </span>
