@@ -24,7 +24,7 @@
 :root.dark {
   color-scheme: dark;
   --pop-border: rgba(253, 243, 226, 0.85);
-  --pop-shadow: rgba(0, 0, 0, 0.55);
+  --pop-shadow: rgba(253, 243, 226, 0.85);
 }
 
 * {

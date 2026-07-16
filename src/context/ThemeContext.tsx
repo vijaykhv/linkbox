@@ -21,6 +21,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem("linkbox-theme", theme);
+    // Keeps the browser/PWA chrome (address bar, installed app title bar) in
+    // sync with the in-app toggle, which is independent of the OS's own
+    // light/dark setting.
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", theme === "dark" ? "#16120c" : "#fdf3e2");
   }, [theme]);
 
   return (
